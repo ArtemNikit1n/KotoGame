@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class Hero : MonoBehaviour
 {
-    [SerializeField] private float speed = 3f;
-    [SerializeField] private float jumpForce = 0.1f;
-    public float swimForce = 5f;
+    [SerializeField] private float speed = 4f;
+    [SerializeField] private float jumpForce = 4f;
     private bool isInWater = false;
     private bool isGrounded = false;
 
@@ -27,12 +26,23 @@ public class Hero : MonoBehaviour
 
     private void Update()
     {
+        if (isInWater == false)
+        {
+            rb.gravityScale = 1.5f;
+            speed = 4f;
+        }
+
+        if (Input.GetKey(KeyCode.LeftShift) && !isInWater)
+        {
+            speed = 6.5f;
+        }
+
         if (Input.GetButton("Horizontal"))
             Run();
         if (isGrounded && Input.GetButton("Jump") && !isInWater)
             Jump();
         if (isInWater && Input.GetButton("Jump"))
-            Jump();
+            Swim();
     }
 
     private void Run()
@@ -69,12 +79,9 @@ public class Hero : MonoBehaviour
 
     private void Swim()
     {
-        if (Input.GetButton("Jump"))
-        {
-            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-        }
-            
-        //rb.AddForce(new Vector2(0, swimForce), ForceMode2D.Force);
+        rb.gravityScale = 0.5f;
+        speed = 3.0f;
+        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
     }
 
     private void CheckWater()
